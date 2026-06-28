@@ -1,6 +1,15 @@
 from typing import Any
 
-from homeassistant.components.cover import CoverEntity, CoverEntityFeature, CoverState
+from homeassistant.components.cover import CoverEntity, CoverEntityFeature
+
+try:
+    from homeassistant.components.cover import CoverState
+except ImportError:
+    class CoverState:
+        OPEN = "open"
+        CLOSED = "closed"
+        OPENING = "opening"
+        CLOSING = "closing"
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant

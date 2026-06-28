@@ -34,20 +34,26 @@ class MideaDataUpdateCoordinator(DataUpdateCoordinator[MideaDeviceData]):
         cloud=None,
     ) -> None:
         """Initialize the coordinator."""
-        super().__init__(
-            hass,
-            _LOGGER,
-            config_entry=config_entry,
-            name=f"{device.device_name} ({device.device_id})",
-            update_method=self.poll_device_state,
-            update_interval=timedelta(seconds=device._refresh_interval),
-            # Must be True: our data payload references the device's attribute
-            # dict. We now emit a fresh snapshot copy each push (see _snapshot),
-            # but always_update=True also guarantees listeners are refreshed on
-            # every successful poll so device-side changes (e.g. made in the
-            # Midea app) reliably reach HA entities.
-            always_update=True,
-        )
+        try:
+            super().__init__(
+                hass,
+                _LOGGER,
+                config_entry=config_entry,
+                name=f"{device.device_name} ({device.device_id})",
+                update_method=self.poll_device_state,
+                update_interval=timedelta(seconds=device._refresh_interval),
+                always_update=True,
+            )
+        except TypeError:
+            super().__init__(
+                hass,
+                _LOGGER,
+                name=f"{device.device_name} ({device.device_id})",
+                update_method=self.poll_device_state,
+                update_interval=timedelta(seconds=device._refresh_interval),
+                always_update=True,
+            )
+            self.config_entry = config_entry
         self.device = device
         self.state_update_muted: CALLBACK_TYPE | None = None
         self._device_id = device.device_id

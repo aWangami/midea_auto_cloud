@@ -302,7 +302,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.warning(f"Failed to download plugin for {device_name}: {e}")
 
             self._download_progress += 1
-            if self._total_devices > 0:
+            if self._total_devices > 0 and hasattr(self, "async_update_progress"):
                 self.async_update_progress(self._download_progress / self._total_devices)
 
     async def async_step_confirm(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
